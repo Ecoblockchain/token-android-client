@@ -46,6 +46,7 @@ import com.tokenbrowser.presenter.factory.WebViewPresenterFactory;
 
 public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, WebViewActivity> {
 
+    public static final String EXTRA__ADDRESS = "address";
     private ActivityWebViewBinding binding;
 
     @Override

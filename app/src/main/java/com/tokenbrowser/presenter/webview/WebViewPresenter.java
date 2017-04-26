@@ -55,9 +55,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void loadTestWebApp() {
+        final String address = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
         this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
-        this.activity.getBinding().webview.loadUrl("http://192.168.1.91:8000/");
+        this.activity.getBinding().webview.loadUrl(address);
     }
 
     private void initTestWebApp() {

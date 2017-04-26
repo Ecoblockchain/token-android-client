@@ -20,13 +20,16 @@ package com.tokenbrowser.presenter;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Patterns;
 import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tokenbrowser.model.local.Dapp;
 import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ViewUserActivity;
+import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.RecommendedAppsAdapter;
 import com.tokenbrowser.view.adapter.SearchAppAdapter;
 import com.tokenbrowser.view.fragment.toplevel.AppsFragment;
@@ -90,11 +93,18 @@ public class AppsPresenter implements Presenter<AppsFragment>{
         final SearchAppAdapter searchAppAdapter = new SearchAppAdapter(new ArrayList<>());
         filteredApps.setAdapter(searchAppAdapter);
         searchAppAdapter.setOnItemClickListener(this::handleAppClicked);
+        searchAppAdapter.setOnDappLaunchListener(this::handleDappLaunch);
     }
 
     private void handleAppClicked(final App app) {
         final Intent intent = new Intent(this.fragment.getContext(), ViewUserActivity.class)
                 .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, app.getTokenId());
+        this.fragment.getContext().startActivity(intent);
+    }
+
+    private void handleDappLaunch(final Dapp dapp) {
+        final Intent intent = new Intent(this.fragment.getContext(), WebViewActivity.class)
+                .putExtra(WebViewActivity.EXTRA__ADDRESS, dapp.getAddress());
         this.fragment.getContext().startActivity(intent);
     }
 
@@ -106,11 +116,12 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                 .map(CharSequence::toString)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(searchString -> updateViewState())
+                .doOnNext(this::tryRenderDappLink)
                 .flatMap(this::runSearchQuery)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::addAppsToRecyclerView,
-                        this::handleSearchErrorResponse
+                        this::handleAppSearchResponse,
+                        this::handleAppSearchError
                 );
 
         updateViewState();
@@ -125,7 +136,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                 .searchApps(searchString);
     }
 
-    private void handleSearchErrorResponse(final Throwable throwable) {
+    private void handleAppSearchError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while searching for app", throwable);
     }
 
@@ -141,7 +152,18 @@ public class AppsPresenter implements Presenter<AppsFragment>{
         }
     }
 
-    private void addAppsToRecyclerView(final List<App> apps) {
+    private void tryRenderDappLink(final String searchString) {
+        final SearchAppAdapter searchAdapter = (SearchAppAdapter) this.fragment.getBinding().searchList.getAdapter();
+
+        if (!Patterns.WEB_URL.matcher(searchString).matches()) {
+            searchAdapter.removeDapp();
+            return;
+        }
+
+        searchAdapter.addDapp(searchString);
+    }
+
+    private void handleAppSearchResponse(final List<App> apps) {
         final SearchAppAdapter searchAdapter = (SearchAppAdapter) this.fragment.getBinding().searchList.getAdapter();
         searchAdapter.addItems(apps);
     }

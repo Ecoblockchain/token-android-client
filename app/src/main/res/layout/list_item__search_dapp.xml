@@ -16,11 +16,13 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <string-array name="settings_options">
-        <item>Local currency</item>
-        <item>About</item>
-        <item>Transactions</item>
-        <item>Sign out</item>
-    </string-array>
-</resources>
+
+<Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dapp_launch_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/FlatButton"
+    android:textSize="14sp"
+    tools:text="Launch www.example.com"/>

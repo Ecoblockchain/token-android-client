@@ -15,43 +15,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.model.network;
+package com.tokenbrowser.model.local;
 
+
+import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.view.adapter.SearchAppAdapter;
 
-public class App {
-    private int review_count;
-    private Double reputation_score;
-    private String token_id;
-    private Custom custom;
-    private String payment_address;
-    private boolean is_app;
+public class AppSearchHeader extends App {
 
-    public int getReviewCount() {
-        return review_count;
-    }
-
-    public Double getReputationScore() {
-        return reputation_score;
-    }
-
-    public String getTokenId() {
-        return token_id;
-    }
-
-    public Custom getCustom() {
-        return custom;
-    }
-
-    public String getPaymentAddress() {
-        return payment_address;
-    }
-
-    public boolean isApp() {
-        return is_app;
-    }
-
+    @Override
     public @SearchAppAdapter.ViewType int getViewType() {
-        return SearchAppAdapter.ITEM;
+        return SearchAppAdapter.HEADER;
     }
 }

@@ -24,8 +24,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.AppSearchHeader;
+import com.tokenbrowser.model.local.Dapp;
 import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
+import com.tokenbrowser.view.adapter.viewholder.SearchAppDappViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.SearchAppHeaderViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.SearchAppViewHolder;
 
@@ -36,26 +39,61 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @IntDef({
             ITEM,
             HEADER,
+            DAPP_LINK
     })
     public @interface ViewType {}
-    private final static int ITEM = 1;
-    private final static int HEADER = 2;
+    public final static int ITEM = 1;
+    public final static int HEADER = 2;
+    public final static int DAPP_LINK = 3;
+
+    private final AppSearchHeader appSearchHeader;
 
     private List<App> apps;
+    private Dapp dapp;
     private OnItemClickListener<App> listener;
+    private OnItemClickListener<Dapp> dappLaunchClicked;
 
     public SearchAppAdapter(final List<App> apps) {
+        this.appSearchHeader = new AppSearchHeader();
         this.apps = apps;
+        addExtras();
     }
 
     public void setOnItemClickListener(final OnItemClickListener<App> listener) {
         this.listener = listener;
     }
 
+    public void setOnDappLaunchListener(final OnItemClickListener<Dapp> listener) {
+        this.dappLaunchClicked = listener;
+    }
+
     public void addItems(final List<App> apps) {
         this.apps.clear();
         this.apps.addAll(apps);
+        addExtras();
         this.notifyDataSetChanged();
+    }
+
+    private void addExtras() {
+        this.apps.add(0, this.appSearchHeader);
+        if (this.dapp != null) {
+            this.apps.add(dapp);
+        }
+    }
+
+    public void addDapp(final String DappAddress) {
+        this.apps.remove(this.dapp);
+        this.dapp = new Dapp(DappAddress);
+        this.apps.add(dapp);
+        this.notifyItemInserted(this.apps.size() - 1);
+    }
+
+    public void removeDapp() {
+        if (this.dapp == null) return;
+
+        this.apps.remove(this.dapp);
+        this.dapp = null;
+        this.notifyItemRemoved(this.apps.size() - 1);
     }
 
     @Override
@@ -64,6 +102,10 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case HEADER: {
                 final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_search_header, parent, false);
                 return new SearchAppHeaderViewHolder(v);
+            }
+            case DAPP_LINK: {
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__search_dapp, parent, false);
+                return new SearchAppDappViewHolder(v);
             }
             case ITEM:
             default: {
@@ -78,13 +120,19 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final @ViewType int viewType = holder.getItemViewType();
 
         switch (viewType) {
+            case DAPP_LINK: {
+                final SearchAppDappViewHolder vh = (SearchAppDappViewHolder) holder;
+                vh.setDapp(this.dapp);
+                vh.setListener(this.dappLaunchClicked);
+                break;
+            }
             case HEADER: {
                 break;
             }
             case ITEM:
             default: {
                 final SearchAppViewHolder vh = (SearchAppViewHolder) holder;
-                final App app = this.apps.get(position - 1);
+                final App app = this.apps.get(position);
 
                 vh.setApp(app);
                 vh.bind(app, this.listener);
@@ -95,12 +143,11 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public @ViewType int getItemViewType(int position) {
-        return position == 0 ? HEADER : ITEM;
+        return this.apps.get(position).getViewType();
     }
 
     @Override
     public int getItemCount() {
-        //Adding one because of the header
-        return this.apps.size() + 1;
+        return this.apps.size();
     }
 }
