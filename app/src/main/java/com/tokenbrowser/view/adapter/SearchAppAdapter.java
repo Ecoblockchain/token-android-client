@@ -82,10 +82,7 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void addDapp(final String DappAddress) {
-        this.apps.remove(this.dapp);
         this.dapp = new Dapp(DappAddress);
-        this.apps.add(dapp);
-        this.notifyItemInserted(this.apps.size() - 1);
     }
 
     public void removeDapp() {
@@ -93,7 +90,6 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         this.apps.remove(this.dapp);
         this.dapp = null;
-        this.notifyItemRemoved(this.apps.size() - 1);
     }
 
     @Override
