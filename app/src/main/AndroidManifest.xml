@@ -98,6 +98,7 @@
         <activity android:name="com.tokenbrowser.view.activity.QrCodeActivity"/>
         <activity android:name="com.tokenbrowser.view.activity.TransactionOverviewActivity" />
         <activity android:name="com.tokenbrowser.view.activity.QrCodeHandlerActivity" />
+        <activity android:name="com.tokenbrowser.view.activity.WebViewActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -40,6 +40,7 @@ import com.tokenbrowser.view.activity.SignOutActivity;
 import com.tokenbrowser.view.activity.TransactionOverviewActivity;
 import com.tokenbrowser.view.activity.TrustedFriendsActivity;
 import com.tokenbrowser.view.activity.ViewProfileActivity;
+import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.SettingsAdapter;
 import com.tokenbrowser.view.custom.RecyclerViewDivider;
 import com.tokenbrowser.view.fragment.toplevel.SettingsFragment;
@@ -154,6 +155,11 @@ public final class SettingsPresenter implements
             }
             case SettingsAdapter.TRANSACTIONS: {
                 final Intent intent = new Intent(this.fragment.getContext(), TransactionOverviewActivity.class);
+                this.fragment.getContext().startActivity(intent);
+                break;
+            }
+            case SettingsAdapter.WEB_VIEW_TEST: {
+                final Intent intent = new Intent(this.fragment.getContext(), WebViewActivity.class);
                 this.fragment.getContext().startActivity(intent);
                 break;
             }
