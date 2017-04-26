@@ -15,12 +15,28 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.presenter;
+/*
+ * 	Copyright (c) 2017. Token Browser, Inc
+ *
+ * 	This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.tokenbrowser.presenter.webview;
 
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
+import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.view.activity.WebViewActivity;
 
 public class WebViewPresenter implements Presenter<WebViewActivity> {
@@ -45,15 +61,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initTestWebApp() {
-        this.activity.getBinding().webview.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                    activity.getBinding().webview.evaluateJavascript("SOFA.initialize();", null);
-                } else {
-                    activity.getBinding().webview.loadUrl("javascript:SOFA.initialize();");
-                }
-            }
-        });
+        this.activity.getBinding().webview.setWebViewClient(new SofaWebViewClient());
     }
 
     @Override
@@ -68,8 +76,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     private class SOFAHost {
         @JavascriptInterface
-        public boolean getAccounts() {
-            return true;
+        public String getAccounts() {
+            return "0x0";
         }
 
         @JavascriptInterface

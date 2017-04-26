@@ -40,7 +40,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityWebViewBinding;
-import com.tokenbrowser.presenter.WebViewPresenter;
+import com.tokenbrowser.presenter.webview.WebViewPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.WebViewPresenterFactory;
 

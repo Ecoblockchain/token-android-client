@@ -17,7 +17,7 @@
 
 package com.tokenbrowser.presenter.factory;
 
-import com.tokenbrowser.presenter.WebViewPresenter;
+import com.tokenbrowser.presenter.webview.WebViewPresenter;
 
 public class WebViewPresenterFactory implements PresenterFactory<WebViewPresenter> {
     @Override
