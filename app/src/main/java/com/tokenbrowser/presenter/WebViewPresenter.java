@@ -17,6 +17,10 @@
 
 package com.tokenbrowser.presenter;
 
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
 import com.tokenbrowser.view.activity.WebViewActivity;
 
 public class WebViewPresenter implements Presenter<WebViewActivity> {
@@ -26,6 +30,30 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onViewAttached(final WebViewActivity view) {
         this.activity = view;
+        initWebView();
+    }
+
+    private void initWebView() {
+        loadTestWebApp();
+        initTestWebApp();
+    }
+
+    private void loadTestWebApp() {
+        this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
+        this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
+        this.activity.getBinding().webview.loadUrl("http://192.168.1.91:8000/");
+    }
+
+    private void initTestWebApp() {
+        this.activity.getBinding().webview.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    activity.getBinding().webview.evaluateJavascript("SOFA.initialize();", null);
+                } else {
+                    activity.getBinding().webview.loadUrl("javascript:SOFA.initialize();");
+                }
+            }
+        });
     }
 
     @Override
@@ -36,5 +64,22 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onDestroyed() {
         this.activity = null;
+    }
+
+    private class SOFAHost {
+        @JavascriptInterface
+        public boolean getAccounts() {
+            return true;
+        }
+
+        @JavascriptInterface
+        public boolean approveTransaction(final String details) {
+            return true;
+        }
+
+        @JavascriptInterface
+        public String signTransaction(final String unsignedTransaction) {
+            return "signature";
+        }
     }
 }
